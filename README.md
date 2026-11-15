@@ -1,0 +1,2 @@
+# ai-seminar
+ai study
