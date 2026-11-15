@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ИИ в разработке ПО</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;600;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Контейнер для скролла */
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Каждый слайд */
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Анимации появления */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Стили текста */
+        h1 {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 900;
+            line-height: 1.1;
+            text-align: center;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #00ffcc, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        p {
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            color: #a0a0a0;
+            max-width: 800px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        .code-block {
+            font-family: 'JetBrains Mono', monospace;
+            background: #111;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #333;
+            color: #00ffcc;
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            box-shadow: 0 20px 50px rgba(0, 255, 204, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Мигающий курсор в коде */
+        .cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Фоновые эффекты */
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 255, 204, 0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(40px);
+        }
+
+        /* Слайд с кнопкой (Финал) */
+        .btn {
+            display: inline-block;
+            margin-top: 3rem;
+            padding: 1.2rem 3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+            background: #00ffcc;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 255, 204, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 204, 0); }
+        }
+
+        /* Индикатор скролла */
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, -10px); }
+            60% { transform: translate(-50%, -5px); }
+        }
+
+        /* Специфичные стили для шагов */
+        .number {
+            font-size: 10rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.05);
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="scroll-container">
+
+    <!-- Слайд 1: Заголовок -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="glow" style="top: 20%; left: 20%;"></div>
+        <div class="reveal">
+            <h1>ИИ УЖЕ<br>ПИШЕТ КОД</h1>
+            <p style="margin-top: 2rem;">А ты умеешь проверять то, что он написал?</p>
+        </div>
+        <div class="scroll-hint">Скролль вниз ↓</div>
+    </section>
+
+    <!-- Слайд 2: Вау-эффект -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="reveal" style="width: 100%; max-width: 900px;">
+            <p style="text-align: left; margin-bottom: 1rem; color: #666; font-family: 'JetBrains Mono', monospace;">// Промпт: Напиши Тетрис на JS</p>
+            <div class="code-block cursor">
+                <span style="color: #666;">function</span> <span style="color: #fff;">createTetris</span>() {<br>
+                &nbsp;&nbsp;<span style="color: #666;">const</span> board = <span style="color: #fff;">Array</span>(20).fill().map(() => <span style="color: #fff;">Array</span>(10).fill(0));<br>
+                &nbsp;&nbsp;<span style="color: #666;">// ... 10 строк кода ...</span><br>
+                &nbsp;&nbsp;<span style="color: #666;">return</span> <span style="color: #00ffcc;">'Игра готова'</span>;<br>
+                }
+            </div>
+            <p style="margin-top: 2rem; text-align: left;">ИИ написал это за <span class="highlight">3 секунды</span>.<br>Человек писал бы <span class="highlight">2 часа</span>.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 3: В чем подвох -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="glow" style="top: 50%; right: 10%; background: radial-gradient(circle, rgba(255, 0, 0, 0.15) 0%, rgba(0,0,0,0) 70%);"></div>
+        <div class="reveal">
+            <h2>Но есть нюанс</h2>
+            <p>ИИ — это не бог. Это <span class="highlight">идеальный стажер</span>. Он знает синтаксис, но не знает вашего бизнеса. Он не видит ваш экран. Он не понимает смысла.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 4: Кейс -->
+    <section class="slide" style="background: #111;">
+        <div class="reveal" style="max-width: 800px; padding: 3rem; border-left: 4px solid #ff3333; background: rgba(255, 51, 51, 0.05);">
+            <h2 style="text-align: left; color: #ff3333; margin-bottom: 1rem;">Ошибка ценой в миллион</h2>
+            <p style="text-align: left;">В 2025 году в компании Replit ИИ-агенту дали задачу «исправить баги». Агент решил, что база данных мешает тестам. И <span class="highlight" style="color: #ff3333;">удалил её</span>.</p>
+            <p style="text-align: left; margin-top: 1rem; font-size: 1.2rem; color: #888;">Он не был злым. Он просто сделал то, что ему разрешили.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 5: Контракт -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="number">01</div>
+        <div class="reveal">
+            <h2>Контракт решает всё</h2>
+            <p>Если вы говорите «сделай красиво» — он сделает <i>что-то</i>. Если вы говорите «сделай кнопку красной, при клике она издает звук» — он сделает <b>именно это</b>.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 6: Галлюцинации -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="number">02</div>
+        <div class="reveal">
+            <h2>Он врет</h2>
+            <p>ИИ может выдумать библиотеку. Может сослаться на несуществующую статью. Это называется <span class="highlight">Галлюцинация</span>. Он не хочет вас обмануть. Он просто предсказывает текст.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 7: Агенты -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="number">03</div>
+        <div class="reveal">
+            <h2>Дай ему права</h2>
+            <p>Чат-бот просто дает текст. <span class="highlight">Агент</span> — нажимает кнопки. Если вы даете ему доступ к терминалу, будьте готовы к последствиям. Всегда требуйте план и подтверждение.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 8: Vibe Coding -->
+    <section class="slide">
+        <div class="reveal">
+            <h2>Vibe Coding</h2>
+            <p>Копировать код, не читая его — это самый быстрый способ создать <span class="highlight">долг</span>. Код работает сейчас. Сломается завтра. Всегда запускайте код и пишите тесты.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 9: Вывод -->
+    <section class="slide">
+        <div class="bg-grid"></div>
+        <div class="glow" style="top: 20%; left: 20%;"></div>
+        <div class="reveal">
+            <h1 style="font-size: clamp(2rem, 6vw, 5rem);">НЕ ЗАМЕНЯЕТ<br>МЫШЛЕНИЕ</h1>
+            <p style="margin-top: 2rem;">Теперь ваша очередь проверить его на прочность.</p>
+        </div>
+    </section>
+
+    <!-- Слайд 10: Переход к практике -->
+    <section class="slide">
+        <div class="reveal" style="text-align: center;">
+            <h2>Практика</h2>
+            <p>Откройте ссылку на задание. Отправьте промпт. Поймайте ИИ на лжи.</p>
+            <a href="https://github.com/mal-corp/ai-seminar" class="btn" target="_blank">НАЧАТЬ</a>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // Intersection Observer для анимации появления при скролле
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.2 // Элемент считается видимым, когда 20% его в экране
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            } else {
+                // Если хотим, чтобы анимация повторялась при скролле вверх:
+                // entry.target.classList.remove('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach((el) => {
+        observer.observe(el);
+    });
+
+    // Плавный скролл для всех слайдов (дополнительная защита)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
