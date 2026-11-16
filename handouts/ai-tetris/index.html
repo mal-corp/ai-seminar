@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тетрис</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+      color: #eee;
+    }
+    .game-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    canvas {
+      border: 2px solid #0f3460;
+      border-radius: 8px;
+      background: #16213e;
+      box-shadow: 0 0 20px rgba(15, 52, 96, 0.5);
+    }
+    .panel {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .info {
+      background: #16213e;
+      padding: 15px 20px;
+      border-radius: 8px;
+      border: 2px solid #0f3460;
+      text-align: center;
+    }
+    .info h3 {
+      margin: 0 0 5px;
+      font-size: 12px;
+      color: #a0a0b0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .info .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e94560;
+    }
+    #next {
+      background: #16213e;
+      border: 2px solid #0f3460;
+      border-radius: 8px;
+    }
+    .controls {
+      font-size: 12px;
+      color: #a0a0b0;
+      line-height: 1.6;
+    }
+    .controls kbd {
+      background: #0f3460;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #eee;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+    }
+    .overlay.active { display: flex; }
+    .overlay h1 { color: #e94560; font-size: 48px; margin: 0 0 20px; }
+    .overlay p { font-size: 18px; margin: 5px; }
+    .overlay button {
+      margin-top: 25px;
+      padding: 12px 30px;
+      font-size: 16px;
+      background: #e94560;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .overlay button:hover { background: #c73650; }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <canvas id="board" width="300" height="600"></canvas>
+    <div class="panel">
+      <div class="info">
+        <h3>Счёт</h3>
+        <div class="value" id="score">0</div>
+      </div>
+      <div class="info">
+        <h3>Линии</h3>
+        <div class="value" id="lines">0</div>
+      </div>
+      <div class="info">
+        <h3>Уровень</h3>
+        <div class="value" id="level">1</div>
+      </div>
+      <canvas id="next" width="120" height="120"></canvas>
+      <div class="controls">
+        <kbd>←</kbd> <kbd>→</kbd> движение<br>
+        <kbd>↓</kbd> ускорить<br>
+        <kbd>↑</kbd> поворот<br>
+        <kbd>Space</kbd> сброс<br>
+        <kbd>P</kbd> пауза
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <h1 id="overlayTitle">Тетрис</h1>
+    <p id="overlayText">Нажмите, чтобы начать</p>
+    <button id="restartBtn">Начать</button>
+  </div>
+
+  <script src="tetris.js"></script>
+</body>
+</html>
