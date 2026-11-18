@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка по нейросетям</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent: #38bdf8;
+            --hover-row: #273549;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            min-width: 260px;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        .filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.45rem 0.9rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--accent);
+            color: #0f172a;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            flex-grow: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #162032;
+            color: var(--accent);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: var(--hover-row);
+        }
+
+        .ai-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #fff;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .badge.code { background-color: rgba(168, 85, 247, 0.15); color: #c084fc; }
+        .badge.image { background-color: rgba(244, 63, 94, 0.15); color: #fb7185; }
+        .badge.video { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge.audio { background-color: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .badge.search { background-color: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+
+        .domain {
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            th, td { padding: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Гид по нейросетям: задачи и особенности</h1>
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Поиск по названию или задаче...">
+        </div>
+    </header>
+
+    <div class="filters" id="filterContainer">
+        <button class="filter-btn active" data-category="all">Все категории</button>
+        <button class="filter-btn" data-category="Текст и универсалы">Текст и универсалы</button>
+        <button class="filter-btn" data-category="Поиск и документы">Поиск и документы</button>
+        <button class="filter-btn" data-category="Код">Код</button>
+        <button class="filter-btn" data-category="Картинки">Картинки</button>
+        <button class="filter-btn" data-category="Видео">Видео</button>
+        <button class="filter-btn" data-category="Звук и презентации">Звук и презентации</button>
+    </div>
+
+    <div class="table-container">
+        <table id="aiTable">
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Нейросеть</th>
+                    <th style="width: 15%;">Категория</th>
+                    <th style="width: 32%;">Примеры задач</th>
+                    <th style="width: 35%;">Ключевые особенности</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-cat="Текст и универсалы">
+                    <td><span class="ai-name">ChatGPT</span><span class="domain">chatgpt.com</span></td>
+                    <td><span class="badge">Текст и универсалы</span></td>
+                    <td>Мозговой штурм, написание писем и постов, перевод, анализ Excel-таблиц, голосовое общение.</td>
+                    <td>Самый универсальный комбайн. Понимает картинки и файлы, умеет рисовать и искать в сети.</td>
+                </tr>
+                <tr data-cat="Текст и универсалы">
+                    <td><span class="ai-name">Claude</span><span class="domain">claude.ai</span></td>
+                    <td><span class="badge">Текст и универсалы</span></td>
+                    <td>Написание живых статей без «канцелярита», редактура книг, сложная логика, программирование.</td>
+                    <td>Лучший стиль русского языка. Функция Artifacts позволяет сразу запускать созданный код и верстку.</td>
+                </tr>
+                <tr data-cat="Текст и универсалы">
+                    <td><span class="ai-name">Qwen (Alibaba)</span><span class="domain">chat.qwen.ai</span></td>
+                    <td><span class="badge">Текст и универсалы</span></td>
+                    <td>Написание кода, решение математики, создание мини-приложений, генерация картинок и видео.</td>
+                    <td>Бесплатный мощный аналог платных моделей. Работает в РФ, умеет генерировать медиа прямо в чате.</td>
+                </tr>
+                <tr data-cat="Поиск и документы">
+                    <td><span class="ai-name">Kimi (Moonshot)</span><span class="domain">kimi.com</span></td>
+                    <td><span class="badge search">Поиск и документы</span></td>
+                    <td>Анализ толстых PDF-книг, юридических договоров, научных статей, написание дипломов и сводок.</td>
+                    <td>Гигантская память (читает до 50 файлов разом и помнит до 2 млн слов). Глубокий поиск в интернете.</td>
+                </tr>
+                <tr data-cat="Текст и универсалы">
+                    <td><span class="ai-name">DeepSeek</span><span class="domain">chat.deepseek.com</span></td>
+                    <td><span class="badge">Текст и универсалы</span></td>
+                    <td>Решение сложных логических задач, математика, написание скриптов, повседневные вопросы.</td>
+                    <td>Бесплатный доступ, показывает цепочку своих рассуждений перед выдачей ответа, доступен без VPN.</td>
+                </tr>
+                <tr data-cat="Текст и универсалы">
+                    <td><span class="ai-name">Google Gemini</span><span class="domain">gemini.google.com</span></td>
+                    <td><span class="badge">Текст и универсалы</span></td>
+                    <td>Анализ часовых видео с YouTube, работа с Google Документами и почтой, обработка больших архивов.</td>
+                    <td>Огромное контекстное окно и тесная связка со всей экосистемой сервисов Google.</td>
+                </tr>
+                <tr data-cat="Текст и универсалы">
+                    <td><span class="ai-name">YandexGPT / GigaChat</span><span class="domain">ya.ru / giga.chat</span></td>
+                    <td><span class="badge">Текст и универсалы</span></td>
+                    <td>Бытовые задачи, рерайт, генерация идей для соцсетей, суммаризация статей и писем.</td>
+                    <td>Работают в России без ограничений и иностранных карт, отлично знают местный культурный контекст.</td>
+                </tr>
+                <tr data-cat="Поиск и документы">
+                    <td><span class="ai-name">Perplexity</span><span class="domain">perplexity.ai</span></td>
+                    <td><span class="badge search">Поиск и документы</span></td>
+                    <td>Поиск свежих новостей, фактчекинг, сравнение товаров и цен, сбор статистики с пруфами.</td>
+                    <td>Заменяет обычный поисковик: сам изучает десятки сайтов и выдает готовый ответ со ссылками на источники.</td>
+                </tr>
+                <tr data-cat="Поиск и документы">
+                    <td><span class="ai-name">NotebookLM</span><span class="domain">notebooklm.google.com</span></td>
+                    <td><span class="badge search">Поиск и документы</span></td>
+                    <td>Подготовка к экзаменам по конспектам, создание базы знаний по проектам, генерация аудиоподкастов.</td>
+                    <td>Не выдумывает факты — отвечает строго по загруженным вами PDF, ссылкам и аудиофайлам.</td>
+                </tr>
+                <tr data-cat="Код">
+                    <td><span class="ai-name">Cursor</span><span class="domain">cursor.com</span></td>
+                    <td><span class="badge code">Код</span></td>
+                    <td>Разработка сайтов и приложений с нуля, рефакторинг больших проектов, поиск багов.</td>
+                    <td>Полноценный редактор кода со встроенным ИИ. Понимает архитектуру всего проекта целиком.</td>
+                </tr>
+                <tr data-cat="Код">
+                    <td><span class="ai-name">GitHub Copilot</span><span class="domain">github.com</span></td>
+                    <td><span class="badge code">Код</span></td>
+                    <td>Автодополнение строк кода во время печати, быстрое написание тестов и комментариев.</td>
+                    <td>Встраивается как плагин в VS Code, JetBrains и другие популярные среды разработки.</td>
+                </tr>
+                <tr data-cat="Картинки">
+                    <td><span class="ai-name">Midjourney</span><span class="domain">midjourney.com</span></td>
+                    <td><span class="badge image">Картинки</span></td>
+                    <td>Художественные иллюстрации, концепт-арты, обложки, стилизованные фотосессии.</td>
+                    <td>Эталон эстетики, освещения и художественного вкуса. Работает через веб-интерфейс и Discord.</td>
+                </tr>
+                <tr data-cat="Картинки">
+                    <td><span class="ai-name">Flux</span><span class="domain">blackforestlabs.ai</span></td>
+                    <td><span class="badge image">Картинки</span></td>
+                    <td>Фотореалистичные портреты, постеры и баннеры с читаемым текстом, предметная съемка.</td>
+                    <td>Отлично справляется с анатомией (особенно руками) и без ошибок пишет текст на картинках.</td>
+                </tr>
+                <tr data-cat="Картинки">
+                    <td><span class="ai-name">Recraft</span><span class="domain">recraft.ai</span></td>
+                    <td><span class="badge image">Картинки</span></td>
+                    <td>Логотипы, наборы иконок в едином стиле, векторная графика (SVG), мокапы.</td>
+                    <td>Создан специально для графических дизайнеров: позволяет задавать точную цветовую палитру.</td>
+                </tr>
+                <tr data-cat="Картинки">
+                    <td><span class="ai-name">Шедеврум / Kandinsky</span><span class="domain">shedevrum.ai / rudalle.ru</span></td>
+                    <td><span class="badge image">Картинки</span></td>
+                    <td>Быстрые картинки для постов, открытки, визуализация идей на русском языке.</td>
+                    <td>Полностью бесплатные российские сервисы с простым интерфейсом и пониманием русских запросов.</td>
+                </tr>
+                <tr data-cat="Видео">
+                    <td><span class="ai-name">Kling AI / Hailuo</span><span class="domain">klingai.com / hailuoai.video</span></td>
+                    <td><span class="badge video">Видео</span></td>
+                    <td>Оживление фотографий, создание динамичных сцен с людьми и животными, рекламные ролики.</td>
+                    <td>Лидеры по реалистичной физике движений, естественной мимике и управлению виртуальной камерой.</td>
+                </tr>
+                <tr data-cat="Видео">
+                    <td><span class="ai-name">Runway</span><span class="domain">runwayml.com</span></td>
+                    <td><span class="badge video">Видео</span></td>
+                    <td>Генерация видео по тексту, удаление лишних объектов из кадра, замена фона, стилизация роликов.</td>
+                    <td>Профессиональный ИИ-комбайн для видеомонтажа и визуальных эффектов.</td>
+                </tr>
+                <tr data-cat="Видео">
+                    <td><span class="ai-name">Sora</span><span class="domain">sora.com</span></td>
+                    <td><span class="badge video">Видео</span></td>
+                    <td>Создание кинематографичных сцен, раскадровок и сложных сюжетных видео по описанию.</td>
+                    <td>Модель от OpenAI с высоким уровнем детализации и инструментом ремикса готовых кадров.</td>
+                </tr>
+                <tr data-cat="Видео">
+                    <td><span class="ai-name">HeyGen</span><span class="domain">heygen.com</span></td>
+                    <td><span class="badge video">Видео</span></td>
+                    <td>Обучающие ролики с говорящей головой, перевод видео на другие языки с дубляжом.</td>
+                    <td>Создает цифрового двойника человека и синхронизирует движение губ (липсинк) под любой язык.</td>
+                </tr>
+                <tr data-cat="Звук и презентации">
+                    <td><span class="ai-name">Suno / Udio</span><span class="domain">suno.com / udio.com</span></td>
+                    <td><span class="badge audio">Звук и презентации</span></td>
+                    <td>Создание полноценных песен на ваши стихи, фоновая музыка для YouTube, джинглы.</td>
+                    <td>Генерируют треки с реалистичным вокалом и аранжировкой в любом жанре за 30 секунд.</td>
+                </tr>
+                <tr data-cat="Звук и презентации">
+                    <td><span class="ai-name">ElevenLabs</span><span class="domain">elevenlabs.io</span></td>
+                    <td><span class="badge audio">Звук и презентации</span></td>
+                    <td>Озвучка аудиокниг, роликов и игр, клонирование собственного голоса, звуковые эффекты.</td>
+                    <td>Максимально естественная интонация и эмоции речи, отличная поддержка русского языка.</td>
+                </tr>
+                <tr data-cat="Звук и презентации">
+                    <td><span class="ai-name">Gamma</span><span class="domain">gamma.app</span></td>
+                    <td><span class="badge audio">Звук и презентации</span></td>
+                    <td>Презентации для учебы и бизнеса, лендинги, красивые отчеты из текстового конспекта.</td>
+                    <td>Сама разбивает текст на слайды, подбирает дизайн, верстку и генерирует иллюстрации.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const rows = document.querySelectorAll('#aiTable tbody tr');
+
+        let currentCategory = 'all';
+
+        function filterTable() {
+            const query = searchInput.value.toLowerCase();
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const category = row.getAttribute('data-cat');
+
+                const matchesSearch = text.includes(query);
+                const matchesCategory = currentCategory === 'all' || category === currentCategory;
+
+                row.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.getAttribute('data-category');
+                filterTable();
+            });
+        });
+    </script>
+</body>
+</html>
